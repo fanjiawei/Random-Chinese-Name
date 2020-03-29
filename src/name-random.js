@@ -4,7 +4,7 @@ import reduce from 'lodash-es/reduce';
 import some from 'lodash-es/some';
 import uniq from 'lodash-es/uniq';
 import pinyin from 'pinyin';
-import Ui from './ui';
+import wordWuxing from './result';
 import toneWords from './words';
 
 const TONE = [
@@ -13,8 +13,6 @@ const TONE = [
     ['ǎ', 'ǒ', 'ě', 'ǐ', 'ǔ', 'ǚ', 'ň'],
     ['à', 'ò', 'è', 'ì', 'ù', 'ǜ']
 ];
-
-const lastName = '范';
 
 /**
  * @param {String} word
@@ -46,27 +44,25 @@ function randomToneType(excludeToneTypes) {
     return num;
 }
 
-function randomName(lastName) {
-    let nameLength = 2;
-    //let nameLength = Math.floor(Math.random() * 2) + 1;
+function randomWord(toneType, wuxings) {
+    const allWords = toneWords[toneType];
+    const result = allWords[Math.floor(Math.random() * allWords.length)];
+    if (wuxings && wuxings.length) {
+        const resultWuxing = wordWuxing[result];
+        if (!resultWuxing || !wuxings.includes(resultWuxing)) {
+            return randomWord(toneType, wuxings);
+        }
+    }
+    return result;
+}
+
+export function randomName(lastName, {wuxings, nameLength = 2}) {
     let nameTones = [];
     for (let i = 0; i < nameLength; i++) {
         nameTones.push(randomToneType([getToneType(lastName), ...nameTones]));
     }
     return reduce(nameTones, (fullName, nameTone) => {
-        const words = toneWords[nameTone];
-        fullName += words[Math.floor(Math.random() * words.length)];
+        fullName += randomWord(nameTone, wuxings);
         return fullName;
     }, lastName);
 }
-
-const ui = new Ui({
-    onStart(lastName) {
-        ui.clearNameList();
-        for (let i = 0; i < 5; i++) {
-            ui.appendName(randomName(lastName));
-        }
-    }
-});
-ui.appendToBody();
-
