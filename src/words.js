@@ -1,4 +1,4 @@
-export default [
+const words = [
     [
         '一',
         '丁',
@@ -1524,3 +1524,7 @@ export default [
         '露'
     ]
 ];
+
+export default words;
+
+

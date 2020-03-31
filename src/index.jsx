@@ -12,10 +12,12 @@ const Main = () => {
     const [lastName, setLastName] = useState('');
     const [wuxings, setWuxings] = useState([]);
     const [names, setNames] = useState([]);
+    const [pinyins, setPinyins] = useState(['', '']);
+
     const start = () => {
         const result = [];
         for (let i = 0; i < 5; i++) {
-            result.push(randomName(lastName, {wuxings}));
+            result.push(randomName(lastName, {wuxings, firstNamePinyins: pinyins}));
         }
         setNames(result);
     };
@@ -43,6 +45,11 @@ const Main = () => {
                            }}/>{i[1]}
                 </label>
             ))}
+        </div>
+        <div>
+            <label>拼音</label>
+            <input value={pinyins[0]} onChange={e => setPinyins([e.target.value, pinyins[1]])}/>
+            <input value={pinyins[1]} onChange={e => setPinyins([pinyins[0], e.target.value])}/>
         </div>
         <div>
             <button onClick={() => start()}>开始</button>
