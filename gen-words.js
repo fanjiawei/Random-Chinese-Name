@@ -26,7 +26,7 @@ let words = [
 for (let i = 0; i < chars.length; i++) {
     let char = chars.charAt(i);
     let toneType = getToneType(char);
-    if (!Number.isInteger(toneType)) {
+    if (!Number.isInteger(toneType)) { //生僻字无法获取声调，暂且放到 words 的第5个数组里
         words[4].push(char);
         continue;
     }
