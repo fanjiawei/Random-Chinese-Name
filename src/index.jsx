@@ -35,7 +35,7 @@ const Main = () => {
                 <label style={{marginRight: '10px'}} key={i[0]}>
                     <input type='checkbox'
                            name='wuxing'
-                           value={i[0]}
+                           value={i[1]}
                            onChange={e => {
                                if (e.target.checked) {
                                    setWuxings([...wuxings, e.target.value]);

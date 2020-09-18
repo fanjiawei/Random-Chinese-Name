@@ -1,5 +1,4 @@
 import flat from 'lodash-es/flatten';
-import includes from 'lodash-es/includes';
 import reduce from 'lodash-es/reduce';
 import some from 'lodash-es/some';
 import uniq from 'lodash-es/uniq';
@@ -46,23 +45,22 @@ function getPinYinToneType(py) {
  */
 function randomToneType(excludeToneTypes) {
     let num = Math.floor(Math.random() * 4);
-    if (uniq(excludeToneTypes).length >= 4) {
+    if (excludeToneTypes.length === 0 || uniq(excludeToneTypes).length >= 4) {
         return num;
     }
-
-    if (includes(excludeToneTypes, num)) {
-        return randomToneType(excludeToneTypes);
+    if (excludeToneTypes.some(i => Math.floor(i / 2) === Math.floor(num / 2))) {
+        return randomToneType([...excludeToneTypes, num]);
     }
     return num;
 }
 
-function randomWord(toneType, {wuxings}) {
+function randomWord(toneType, { wuxings }) {
     const allWords = toneWords[toneType];
     const result = allWords[Math.floor(Math.random() * allWords.length)];
     if (wuxings && wuxings.length) {
         const resultWuxing = wordWuxing[result];
         if (!resultWuxing || !wuxings.includes(resultWuxing)) {
-            return randomWord(toneType, {wuxings});
+            return randomWord(toneType, { wuxings });
         }
     }
     return result;
@@ -73,14 +71,14 @@ function randomWord(toneType, {wuxings}) {
  * @param {string} py - 拼音
  * @param {string[]} wuxings - 五行
  */
-function randomWordByPinyin(py, {wuxings}) {
+function randomWordByPinyin(py, { wuxings }) {
     let toneType = getPinYinToneType(py);
     if (toneType === -1) {
         throw new Error(`拼音"${py}"书写不对`);
     }
 
     for (let i = 0; i < 3000; i++) {
-        let word = randomWord(toneType, {wuxings});
+        let word = randomWord(toneType, { wuxings });
         console.log('word', flat(pinyin(word)));
         if (flat(pinyin(word)).some(j => j.indexOf(py) > -1)) {
             return word;
@@ -89,19 +87,23 @@ function randomWordByPinyin(py, {wuxings}) {
     throw new Error(`拼音"${py}"书写不对`);
 }
 
-export function randomName(lastName, {wuxings, nameLength = 2, firstNamePinyins = []}) {
+export function randomName(lastName, { wuxings, nameLength = 2, firstNamePinyins = [] }) {
     let nameTones = [];
     if (firstNamePinyins && firstNamePinyins.filter(i => i).length > 0) {
         return reduce(firstNamePinyins.filter(i => i), (fullName, firstNamePinyin) => {
-            fullName += randomWordByPinyin(firstNamePinyin, {wuxings});
+            fullName += randomWordByPinyin(firstNamePinyin, { wuxings });
             return fullName;
         }, lastName);
     }
     for (let i = 0; i < nameLength; i++) {
-        nameTones.push(randomToneType([...getToneType(lastName), ...nameTones]));
+        if (i === 0) {
+            nameTones.push(randomToneType([]));
+        } else {
+            nameTones.push(randomToneType([...getToneType(lastName), ...nameTones]));
+        }
     }
     return reduce(nameTones, (fullName, nameTone) => {
-        fullName += randomWord(nameTone, {wuxings});
+        fullName += randomWord(nameTone, { wuxings });
         return fullName;
     }, lastName);
 }
