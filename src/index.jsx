@@ -3,7 +3,7 @@ import React, {
     useState
 } from 'react';
 import * as ReactDOM from 'react-dom';
-import {randomName} from './name-random';
+import { randomName } from './name-random';
 
 const rootElement = document.createElement('div');
 document.body.append(rootElement);
@@ -17,7 +17,7 @@ const Main = () => {
     const start = () => {
         const result = [];
         for (let i = 0; i < 5; i++) {
-            result.push(randomName(lastName, {wuxings, firstNamePinyins: pinyins}));
+            result.push(randomName(lastName, { wuxings, firstNamePinyins: pinyins }));
         }
         setNames(result);
     };
@@ -32,7 +32,7 @@ const Main = () => {
         <div>
             <label>五行</label>
             {[['jin', '金'], ['mu', '木'], ['shu', '水'], ['huo', '火'], ['tu', '土']].map(i => (
-                <label style={{marginRight: '10px'}} key={i[0]}>
+                <label style={{ marginRight: '10px' }} key={i[0]}>
                     <input type='checkbox'
                            name='wuxing'
                            value={i[1]}
@@ -55,7 +55,11 @@ const Main = () => {
             <button onClick={() => start()}>开始</button>
         </div>
         {names.length ? <ul>
-            {names.map((i, idx) => <li key={idx}>{i}</li>)}
+            {names.map((i, idx) => <li key={idx}>
+                {i.map(i => i.content).join('')}
+                ({i.map(i => i.pinyin).join(' ')})
+                【{i.map(i => i.wuxing).join('')}】
+            </li>)}
         </ul> : ''}
     </Fragment>;
 };
