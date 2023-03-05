@@ -20,7 +20,8 @@ const Main = () => {
     };
 
     return <Fragment>
-        <div><a target='_blank' href="https://baike.baidu.com/item/%E5%96%9C%E7%94%A8%E7%A5%9E/10646208">如何计算五行缺什么</a>
+        <div><a target="_blank"
+                href="https://baike.baidu.com/item/%E5%96%9C%E7%94%A8%E7%A5%9E/10646208">如何计算五行缺什么</a>
         </div>
         <div>
             <label>姓</label>
@@ -31,8 +32,8 @@ const Main = () => {
             <label>五行</label>
             {[['jin', '金'], ['mu', '木'], ['shu', '水'], ['huo', '火'], ['tu', '土']].map(i => (
                 <label style={{marginRight: '10px'}} key={i[0]}>
-                    <input type='checkbox'
-                           name='wuxing'
+                    <input type="checkbox"
+                           name="wuxing"
                            value={i[1]}
                            onChange={e => {
                                if (e.target.checked) {
@@ -49,27 +50,29 @@ const Main = () => {
             <input value={pinyins[0]} onChange={e => setPinyins([e.target.value, pinyins[1]])}/>
             <input value={pinyins[1]} onChange={e => setPinyins([pinyins[0], e.target.value])}/>
         </div>
-        <div>
+        <ul>
+            {names.length ? <Fragment>
+                {names.map((i, idx) => <li key={idx}>
+                    {i.map(i => i.content).join('')}
+                    ({i.map((j, index) => {
+                    if (j.content === lastName.trim()) {
+                        return j.pinyin;
+                    }
+                    return <button className="a" onClick={() => setPinyins(v => {
+                        const _v = [...v];
+                        _v[index - 1] = j.pinyin[0][0];
+                        return _v;
+                    })}>{j.pinyin}</button>;
+                })})
+                    【{i.map(i => i.wuxing).join('')}】
+                </li>)}
+            </Fragment> : null}
+        </ul>
+        <div id="start">
             <button onClick={start}>开始</button>
         </div>
-        {names.length ? <ul>
-            {names.map((i, idx) => <li key={idx}>
-                {i.map(i => i.content).join('')}
-                ({i.map((j, index) => {
-                if (j.content === lastName.trim()) {
-                    return j.pinyin;
-                }
-                return <button className='a' onClick={() => setPinyins(v => {
-                    const _v = [...v];
-                    _v[index - 1] = j.pinyin[0][0];
-                    return _v;
-                })}>{j.pinyin}</button>;
-            })})
-                【{i.map(i => i.wuxing).join('')}】
-            </li>)}
-        </ul> : ''}
     </Fragment>;
 };
-ReactDOM.render(<div><Main/></div>, rootElement);
+ReactDOM.render(<Main/>, rootElement);
 
 
